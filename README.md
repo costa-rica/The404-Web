@@ -28,6 +28,42 @@ The dashboard unifies multiple APIs, each hosted on a separate Ubuntu server, an
 
 ---
 
+## Design System
+
+The 404 Web uses a **terminal-inspired aesthetic** — minimalist, functional, with high contrast and readability that evokes classic CRT terminal environments.
+
+### Color Palette
+
+- **Background: `#34385A`**
+  Main dashboard background. Dark navy tone reminiscent of terminal environments.
+
+- **Highlight / Accent: `#FA9F15`**
+  Used for hover states, primary buttons, and visual emphasis. Amber tone inspired by CRT terminals.
+
+- **Dark Text: `#000000`**
+  Used for light background sections or cards.
+
+- **Medium Text: `#888787`**
+  Used for secondary text, timestamps, or labels.
+
+- **Light Text: `#FFFFFF`**
+  Used for primary text on dark backgrounds.
+
+- **Error / Warning Red: `#8B0419`**
+  Used sparingly for critical alerts or destructive actions.
+
+### Typography
+
+- **Primary Font: JetBrains Mono, monospace**
+  Used across all text to reinforce the technical and terminal-style design.
+  Fallback: `monospace`
+
+### Implementation Status
+
+**These design guidelines are finalized but NOT YET IMPLEMENTED in code.** They should guide all future UI and style updates. Implementation pending design approval.
+
+---
+
 ### Template Origin
 
 This project originated from a Next.js admin dashboard template and was customized to fit the structure and goals of **The 404 Server Manager**. The following references describe its starting point and base setup:
@@ -50,7 +86,3 @@ This project originated from a Next.js admin dashboard template and was customiz
 - `npm install tailwind-merge`
 - `npm i -D @svgr/webpack`
   - Requires an update to the `next.config.ts` file → see the file for details.
-
-## For Claude Code (claude.ai/code)
-
-Use the docs/CLAUDE_TEMPLATE.md and docs/PROJECT_OVERVIEW.md files references for the project structure. They are both documentation files for a different project that will have a very similar structure to this one. For the overall object of the project use the Overview section of the README.md file.
