@@ -1,12 +1,8 @@
-# CLAUDE.md for NewsNexusPortal09
+# Project Overview
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
-
-NewsNexusPortal09 is a Next.js 15 web application built with the App Router, serving as the modernized front end for the NewsNexus09Db and microservices suite. It's a complete rebuild of NewsNexus08Portal (which was built with plain JavaScript), now using Next.js conventions, TypeScript, TailwindCSS v4, and Redux Toolkit with persist for state management.
-
-The project architecture is heavily inspired by the free-nextjs-admin-dashboard-main template, providing a structured file system, reusable components, and responsive dashboard layouts.
 
 ## Development Commands
 
@@ -24,37 +20,20 @@ npm start
 npm run lint
 ```
 
-## Component Refactoring Difficulty Scale
+## Implementation Difficulty Index
 
-When migrating components from NewsNexus08Portal (v08) to NewsNexusPortal09 (v09), use this scale to assess implementation complexity:
+This index helps Claude determine how challenging a proposed implementation would be within this project’s architecture and conventions. Claude should use this to assign a score from 0 to 10 when assessing new implementation requests.
 
-**Rating: 0-10** where:
+**Scale:**
 
-- **0-2**: Very easy - Minimal changes, fits existing patterns perfectly, 1 new file max
-- **3-5**: Moderate - May need to modify 1-2 existing files, create 1-2 new files, some pattern adjustments
-- **6-8**: Complex - Requires modifying 3+ files, new architectural patterns, significant refactoring
-- **9-10**: Very complex - Major architectural changes, multiple new systems, extensive refactoring
-
-### Factors That Affect Difficulty:
-
-- Number of new files to create
-- Number of existing files to modify
-- Architectural pattern compatibility
-- Redux store modifications needed
-- New dependencies required
-- Conflicts with existing systems (sidebar, header, modals, etc.)
-- Styling/theme integration complexity
-
-### Example Assessment:
-
-**SummaryStatistics Component**: Rating 2/10
-
-- ✅ 1 new file (`SummaryStatistics.tsx`)
-- ✅ 0 existing files modified
-- ✅ Redux actions already exist
-- ✅ Styling template available (EcommerceMetrics)
-- ✅ No modal system conflicts (uses inline loading)
-- ✅ No new dependencies
+0: no need to change anything — functionality already exists  
+1: minor modifications to existing files  
+2: major modifications to existing files  
+3–4: create new files  
+5–6: create new files and folders  
+7–8: change current structure and architecture (renaming, deleting, or repurposing)  
+9: outside the range of convention given the technology, packages, and architecture in use  
+10: impossible to accomplish
 
 ## Architecture & Key Patterns
 
@@ -132,16 +111,6 @@ SVG icons in `src/icons/` are imported as React components using `@svgr/webpack`
 
 - `NEXT_PUBLIC_API_BASE_URL`: Base URL for NewsNexusAPI09 backend
 - `NEXT_PUBLIC_MODE`: Set to "workstation" to prefill login form for development
-
-## Migration from v08
-
-Key differences from NewsNexus08Portal:
-
-- **No `TemplateView.js`**: Replaced by layout.tsx files in route groups
-- **No `[root_navigator].js` / `[navigator].js`**: File-system routing replaces dynamic navigator components
-- **Redux instead of context**: State management moved from React Context to Redux Toolkit
-- **App Router instead of Pages Router**: Route definitions are folders with `page.tsx`, not files in `pages/`
-- **Server/client separation**: Components must be marked `"use client"` to use hooks, events, or browser APIs
 
 ## Important Notes
 
