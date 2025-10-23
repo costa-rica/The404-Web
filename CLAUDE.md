@@ -456,7 +456,7 @@ $ the-404> _
 #### Color Scheme
 
 - **"404"**: Always terminal orange (`text-brand-500` = `#e95420`)
-- **"$ the-" and "> _"**: Theme-adaptive
+- **"$ the-" and "> \_"**: Theme-adaptive
   - Light mode: Black (`text-gray-900`)
   - Dark mode: White (`text-white`)
 
@@ -473,6 +473,7 @@ Use this code pattern for all logo implementations:
 ```
 
 **Size variants** (adjust as needed for context):
+
 - **Large** (auth pages): `text-5xl sm:text-6xl md:text-7xl`
 - **Medium** (headers): `text-3xl sm:text-4xl`
 - **Small** (compact areas): `text-xl sm:text-2xl`
@@ -552,3 +553,18 @@ This project originated from `create-next-app@latest` and was customized from th
 
 1. Create: `src/app/(full-width)/(auth)/your-page/page.tsx`
 2. Inherits full-width auth layout automatically
+
+## Implementation Difficulty Index
+
+This index helps Claude determine how challenging a proposed implementation would be within this project’s architecture and conventions. Claude should use this to assign a score from 0 to 10 when assessing new implementation requests.
+
+**Scale:**
+
+0: no need to change anything — functionality already exists  
+1: minor modifications to existing files  
+2: major modifications to existing files  
+3–4: create new files  
+5–6: create new files and folders  
+7–8: change current structure and architecture (renaming, deleting, or repurposing)  
+9: outside the range of convention given the technology, packages, and architecture in use  
+10: impossible to accomplish
