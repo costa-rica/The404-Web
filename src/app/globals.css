@@ -4,7 +4,7 @@
 
 @theme {
 	--font-*: initial;
-	--font-outfit: Outfit, sans-serif;
+	--font-jetbrains: "JetBrains Mono", monospace;
 
 	--breakpoint-*: initial;
 	--breakpoint-2xsm: 375px;
@@ -183,7 +183,7 @@
 		cursor: pointer;
 	}
 	body {
-		@apply relative font-normal font-outfit z-1 bg-gray-50;
+		@apply relative font-normal font-jetbrains z-1 bg-gray-50;
 	}
 }
 

@@ -1,14 +1,12 @@
 "use client";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-import Button from "@/components/ui/button/Button";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/store/features/user/userSlice";
+import { useTheme } from "@/context/ThemeContext";
 
 // export default function SignInForm() {
 export default function LoginForm() {
@@ -21,6 +19,7 @@ export default function LoginForm() {
 	);
 	const dispatch = useAppDispatch();
 	const router = useRouter();
+	const { theme } = useTheme();
 	// const userReducer = useSelector((state) => state.user);
 	const userReducer = useAppSelector((s) => s.user);
 
@@ -81,100 +80,82 @@ export default function LoginForm() {
 	};
 
 	return (
-		<div className="flex flex-col flex-1  w-full">
-			<div className="grid grid-cols-1 lg:grid-cols-2 w-full h-screen mt-5">
-				<div className="flex flex-col justify-center px-6 lg:px-12 w-full h-full">
-					<div className="mb-5 sm:mb-8">
-						<h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-							Sign In
-						</h1>
-					</div>
-					<div>
-						<form>
-							<div className="space-y-6">
-								<div>
-									<Label>
-										Email <span className="text-error-500">*</span>{" "}
-									</Label>
-									<Input
-										placeholder="info@gmail.com"
-										type="email"
-										value={email}
-										onChange={(e) => emailSetter(e.target.value)}
-									/>
-								</div>
-								<div>
-									<Label>
-										Password <span className="text-error-500">*</span>{" "}
-									</Label>
-									<div className="relative">
-										<Input
-											type={showPassword ? "text" : "password"}
-											value={password}
-											onChange={(e) => passwordSetter(e.target.value)}
-											placeholder="Enter your password"
-										/>
-										<span
-											onClick={() => setShowPassword(!showPassword)}
-											className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-										>
-											{showPassword ? (
-												<EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-											) : (
-												<EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-											)}
-										</span>
-									</div>
-								</div>
-								<div className="flex items-center justify-end">
-									<Link
-										href="/reset-password"
-										className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-									>
-										Forgot password?
-									</Link>
-								</div>
-								<div>
-									<Button
-										type="button"
-										className="w-full"
-										size="sm"
-										// onClick={handleClickLogin}
-										onClick={() => {
-											console.log("Submitted email:", email);
-											console.log("Submitted password:", password);
-											handleClickLogin();
-											// You can call your submit logic or dispatch here
-										}}
-									>
-										Sign in
-									</Button>
-								</div>
-							</div>
-						</form>
+		<div className="flex flex-col items-center justify-start w-full min-h-screen px-6 py-8">
+			{/* Logo in top third */}
+			<div className="flex items-center justify-center w-full h-1/3 min-h-[200px] mb-8">
+				<Image
+					width={600}
+					height={300}
+					className="w-full max-w-md h-auto object-contain"
+					src={theme === "dark" ? "/images/logo02_whiteFont.png" : "/images/logo02_blackFont.png"}
+					alt="The 404 Logo"
+					priority
+				/>
+			</div>
 
-						<div className="mt-5">
-							<p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-								Don&apos;t have an account? {""}
-								<Link
-									href="/signup"
-									className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-								>
-									Sign Up
-								</Link>
-							</p>
-						</div>
+			{/* Login Form */}
+			<div className="w-full max-w-2xl">
+				<form className="space-y-8">
+					{/* Email Input */}
+					<div>
+						<input
+							type="email"
+							value={email}
+							onChange={(e) => emailSetter(e.target.value)}
+							placeholder="Email"
+							className="w-full px-6 py-5 text-3xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all"
+						/>
 					</div>
-				</div>
-				<div className="hidden lg:flex items-center justify-center w-full h-full p-10">
-					<Image
-						width={1500}
-						height={1500}
-						className="w-full h-full object-contain"
-						src="/images/DashDataV3_calibri_teal_iosIcon.png"
-						alt="DashData Logo"
-					/>
-				</div>
+
+					{/* Password Input */}
+					<div className="relative">
+						<input
+							type={showPassword ? "text" : "password"}
+							value={password}
+							onChange={(e) => passwordSetter(e.target.value)}
+							placeholder="Password"
+							className="w-full px-6 py-5 text-3xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all"
+						/>
+						<span
+							onClick={() => setShowPassword(!showPassword)}
+							className="absolute z-30 -translate-y-1/2 cursor-pointer right-6 top-1/2"
+						>
+							{showPassword ? (
+								<EyeIcon className="w-8 h-8 fill-gray-500 dark:fill-gray-400" />
+							) : (
+								<EyeCloseIcon className="w-8 h-8 fill-gray-500 dark:fill-gray-400" />
+							)}
+						</span>
+					</div>
+
+					{/* Sign In Button */}
+					<div>
+						<button
+							type="button"
+							onClick={() => {
+								console.log("Submitted email:", email);
+								console.log("Submitted password:", password);
+								handleClickLogin();
+							}}
+							className="w-full px-6 py-5 text-3xl font-semibold text-white bg-brand-500 hover:bg-brand-600 dark:bg-brand-400 dark:hover:bg-brand-500 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400"
+						>
+							Sign in
+						</button>
+					</div>
+
+					{/* Sign Up Link */}
+					<div className="mt-6">
+						<p className="text-xl text-center text-gray-700 dark:text-gray-400">
+							Don&apos;t have an account?{" "}
+							<Link
+								href="/signup"
+								className="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-500 font-medium"
+							>
+								Sign Up
+							</Link>
+						</p>
+					</div>
+				</form>
 			</div>
 		</div>
 	);

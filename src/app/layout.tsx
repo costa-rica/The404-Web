@@ -3,9 +3,9 @@ import "./globals.css";
 import Providers from "./providers";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { SidebarProvider } from "@/context/SidebarContext";
-import { Outfit } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 
-const outfit = Outfit({
+const jetbrainsMono = JetBrains_Mono({
 	subsets: ["latin"],
 });
 
@@ -24,7 +24,7 @@ export default function RootLayout({
 			{/* <body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			> */}
-			<body className={`${outfit.className} dark:bg-gray-900`}>
+			<body className={`${jetbrainsMono.className} dark:bg-gray-900`}>
 				<Providers>
 					{" "}
 					<ThemeProvider>
