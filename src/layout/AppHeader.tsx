@@ -1,10 +1,14 @@
 "use client";
 import { useSidebar } from "@/context/SidebarContext";
+import { useAppSelector } from "@/store/hooks";
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
 
 const AppHeader: React.FC = () => {
 	const { isMobileOpen, toggleMobileSidebar } = useSidebar();
+	const { machineName, urlFor404Api, localIpAddress } = useAppSelector(
+		(s) => s.user
+	);
 
 	const handleToggle = () => {
 		toggleMobileSidebar();
@@ -31,13 +35,36 @@ const AppHeader: React.FC = () => {
 		<header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-800 lg:border-b">
 			<div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
 				<div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:border-b-0 lg:px-0 lg:py-4">
-					<Link href="/">
+					{/* Logo - Hidden on mobile when machine is connected */}
+					<Link
+						href="/"
+						className={machineName ? "hidden lg:block" : "block"}
+					>
 						<h1 className="text-2xl sm:text-3xl font-mono tracking-wide">
 							<span className="text-gray-900 dark:text-white">$ the-</span>
 							<span className="text-brand-500">404</span>
 							<span className="text-gray-900 dark:text-white">&gt; _</span>
 						</h1>
 					</Link>
+
+					{/* Connected Machine Info - Center */}
+					{machineName && (
+						<div className="flex-1 flex justify-center lg:justify-center">
+							<div className="text-center">
+								<div className="text-lg font-semibold text-gray-900 dark:text-white">
+									{machineName}
+								</div>
+								<div className="text-sm text-gray-500 dark:text-gray-400">
+									{urlFor404Api}
+								</div>
+								<div className="text-sm text-gray-500 dark:text-gray-400">
+									{localIpAddress}
+								</div>
+							</div>
+						</div>
+					)}
+
+					{/* Mobile Menu Toggle */}
 					<button
 						className="flex lg:hidden items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 dark:text-gray-400"
 						onClick={handleToggle}
@@ -74,7 +101,6 @@ const AppHeader: React.FC = () => {
 								/>
 							</svg>
 						)}
-						{/* Cross Icon */}
 					</button>
 				</div>
 			</div>

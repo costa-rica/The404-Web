@@ -91,6 +91,7 @@ export const mockMachinesData: MachinesResponse = {
 				"/Users/nick/Documents/_testData/nginx-sites-available",
 			],
 			userHomeDir: "/home/dashanddata_user",
+			urlFor404Api: "http://localhost:8000",
 		},
 	],
 };

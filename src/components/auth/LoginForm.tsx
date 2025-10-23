@@ -25,7 +25,7 @@ export default function LoginForm() {
 	useEffect(() => {
 		// Auto-redirect if user is already logged in
 		if (userReducer.token) {
-			router.push("/home");
+			router.push("/servers/machines");
 			return;
 		}
 
@@ -66,7 +66,7 @@ export default function LoginForm() {
 			resJson.email = email;
 			try {
 				dispatch(loginUser(resJson));
-				router.push("/home");
+				router.push("/servers/machines");
 			} catch (error) {
 				console.error("Error logging in:", error);
 				alert("Error logging in");

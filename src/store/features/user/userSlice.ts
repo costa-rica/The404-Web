@@ -10,6 +10,7 @@ export interface UserState {
 	// Connected machine info
 	machineName: string | null;
 	urlFor404Api: string | null;
+	localIpAddress: string | null;
 	nginxStoragePathOptions: string[];
 }
 
@@ -21,6 +22,7 @@ const initialState: UserState = {
 	// Connected machine info
 	machineName: null,
 	urlFor404Api: null,
+	localIpAddress: null,
 	nginxStoragePathOptions: [],
 };
 
@@ -46,17 +48,20 @@ export const userSlice = createSlice({
 			action: PayloadAction<{
 				machineName: string;
 				urlFor404Api: string;
+				localIpAddress: string;
 				nginxStoragePathOptions: string[];
 			}>
 		) => {
 			state.machineName = action.payload.machineName;
 			state.urlFor404Api = action.payload.urlFor404Api;
+			state.localIpAddress = action.payload.localIpAddress;
 			state.nginxStoragePathOptions = action.payload.nginxStoragePathOptions;
 		},
 
 		disconnectMachine: (state) => {
 			state.machineName = null;
 			state.urlFor404Api = null;
+			state.localIpAddress = null;
 			state.nginxStoragePathOptions = [];
 		},
 
@@ -73,6 +78,7 @@ export const userSlice = createSlice({
 			state.isAdmin = false;
 			state.machineName = null;
 			state.urlFor404Api = null;
+			state.localIpAddress = null;
 			state.nginxStoragePathOptions = [];
 			console.log("-----> Finished Super Logout !!!");
 		},

@@ -10,7 +10,6 @@ import {
 	CloseIcon,
 	DatabaseIcon,
 	HorizontaLDots,
-	HouseIcon,
 	LogoutIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
@@ -25,13 +24,6 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-	{
-		icon: <HouseIcon />,
-		name: "Home",
-		subItems: [
-			{ name: "Home page", path: "/home", pro: false },
-		],
-	},
 	{
 		icon: <DatabaseIcon />,
 		name: "Servers",
