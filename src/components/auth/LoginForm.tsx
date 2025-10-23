@@ -1,7 +1,6 @@
 "use client";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
-import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
@@ -81,16 +80,13 @@ export default function LoginForm() {
 
 	return (
 		<div className="flex flex-col items-center justify-start w-full min-h-screen px-6 py-8">
-			{/* Logo in top third */}
+			{/* Terminal Logo */}
 			<div className="flex items-center justify-center w-full h-1/3 min-h-[200px] mb-8">
-				<Image
-					width={600}
-					height={300}
-					className="w-full max-w-md h-auto object-contain"
-					src={theme === "dark" ? "/images/logo02_whiteFont.png" : "/images/logo02_blackFont.png"}
-					alt="The 404 Logo"
-					priority
-				/>
+				<h1 className="text-5xl sm:text-6xl md:text-7xl font-mono tracking-wide">
+					<span className="text-gray-900 dark:text-white">$ the-</span>
+					<span className="text-brand-500">404</span>
+					<span className="text-gray-900 dark:text-white">&gt; _</span>
+				</h1>
 			</div>
 
 			{/* Login Form */}
@@ -143,17 +139,14 @@ export default function LoginForm() {
 						</button>
 					</div>
 
-					{/* Sign Up Link */}
-					<div className="mt-6">
-						<p className="text-xl text-center text-gray-700 dark:text-gray-400">
-							Don&apos;t have an account?{" "}
-							<Link
-								href="/signup"
-								className="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-500 font-medium"
-							>
-								Sign Up
-							</Link>
-						</p>
+					{/* Forgot Password Link */}
+					<div className="mt-6 flex justify-end">
+						<Link
+							href="/forgot-password"
+							className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400 transition-colors"
+						>
+							forgot password?
+						</Link>
 					</div>
 				</form>
 			</div>
