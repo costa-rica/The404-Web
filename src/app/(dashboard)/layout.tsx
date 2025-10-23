@@ -25,7 +25,7 @@ export default function DashboardLayout({
 				className={`flex-1 transition-all duration-300 ease-in-out ${mainContentMargin}`}
 			>
 				<AppHeader />
-				<div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+				<div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6 dark:bg-gray-950">
 					{children}
 				</div>
 			</div>
