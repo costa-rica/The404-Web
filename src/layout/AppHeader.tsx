@@ -1,6 +1,5 @@
 "use client";
 import { useSidebar } from "@/context/SidebarContext";
-import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
 
@@ -33,20 +32,11 @@ const AppHeader: React.FC = () => {
 			<div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
 				<div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:border-b-0 lg:px-0 lg:py-4">
 					<Link href="/">
-						<Image
-							width={154}
-							height={32}
-							className="dark:hidden"
-							src="/images/logoAndNameRound.png"
-							alt="Logo and Name"
-						/>
-						<Image
-							width={154}
-							height={32}
-							className="hidden dark:block"
-							src="/images/logoAndNameRound.png"
-							alt="Logo and Name"
-						/>
+						<h1 className="text-2xl sm:text-3xl font-mono tracking-wide">
+							<span className="text-gray-900 dark:text-white">$ the-</span>
+							<span className="text-brand-500">404</span>
+							<span className="text-gray-900 dark:text-white">&gt; _</span>
+						</h1>
 					</Link>
 					<button
 						className="flex lg:hidden items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 dark:text-gray-400"
