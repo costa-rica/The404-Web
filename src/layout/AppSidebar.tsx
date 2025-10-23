@@ -33,6 +33,14 @@ const navItems: NavItem[] = [
 		],
 	},
 	{
+		icon: <DatabaseIcon />,
+		name: "Servers",
+		subItems: [
+			{ name: "Machines", path: "/servers/machines", pro: false },
+			{ name: "Apps", path: "/servers/apps", pro: false },
+		],
+	},
+	{
 		icon: <LogoutIcon />,
 		name: "Logout",
 		onClick: () => {}, // Placeholder - actual handler assigned in renderMenuItems

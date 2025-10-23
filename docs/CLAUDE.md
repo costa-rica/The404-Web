@@ -162,7 +162,7 @@ src/components/
 ├── form/              # Form inputs, selects, switches, labels, etc.
 ├── ui/                # Reusable primitives (button, modal, dropdown, alert, badge, table)
 ├── common/            # Shared components (breadcrumbs, theme toggle, chart tabs)
-└── tables/            # Specialized table components (DELETED in current state)
+└── tables/            # Table components using @tanstack/react-table
 
 src/layout/            # Top-level layout components
 ├── AppHeader.tsx      # Top navigation bar
@@ -199,6 +199,224 @@ const { isDarkMode, toggleTheme } = useTheme();
 import { useSidebar } from "@/context/SidebarContext";
 const { isExpanded, isMobileOpen, toggleSidebar, toggleMobileSidebar } =
 	useSidebar();
+```
+
+### Tables with TanStack Table
+
+**IMPORTANT:** All data tables in The 404 Web use `@tanstack/react-table` for table functionality. Each table is implemented as its own component in `src/components/tables/`.
+
+#### Table Architecture
+
+**Package:** `@tanstack/react-table` (v8+)
+
+**Location:** All table components live in `src/components/tables/`
+
+**Naming convention:** `Table[Feature].tsx` (e.g., `TableMachines.tsx`, `TableApps.tsx`)
+
+#### Implementation Pattern
+
+Each table component should follow this structure:
+
+```typescript
+"use client";
+import React, { useMemo } from "react";
+import {
+	useReactTable,
+	getCoreRowModel,
+	flexRender,
+	ColumnDef,
+} from "@tanstack/react-table";
+
+interface YourDataType {
+	// Define your data structure
+}
+
+interface YourTableProps {
+	data: YourDataType[];
+	// Additional props as needed
+}
+
+export default function YourTable({ data }: YourTableProps) {
+	// Define columns using useMemo
+	const columns = useMemo<ColumnDef<YourDataType>[]>(
+		() => [
+			{
+				accessorKey: "fieldName",
+				header: "Display Name",
+				cell: (info) => info.getValue(),
+			},
+			// Additional columns...
+		],
+		[]
+	);
+
+	// Initialize table instance
+	const table = useReactTable({
+		data,
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+		// Additional table options...
+	});
+
+	return (
+		<div className="overflow-x-auto">
+			<table className="w-full">
+				<thead>
+					{table.getHeaderGroups().map((headerGroup) => (
+						<tr key={headerGroup.id}>
+							{headerGroup.headers.map((header) => (
+								<th key={header.id}>
+									{flexRender(
+										header.column.columnDef.header,
+										header.getContext()
+									)}
+								</th>
+							))}
+						</tr>
+					))}
+				</thead>
+				<tbody>
+					{table.getRowModel().rows.map((row) => (
+						<tr key={row.id}>
+							{row.getVisibleCells().map((cell) => (
+								<td key={cell.id}>
+									{flexRender(cell.column.columnDef.cell, cell.getContext())}
+								</td>
+							))}
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	);
+}
+```
+
+#### Styling Guidelines
+
+Tables should follow the terminal-inspired design system:
+
+**Structure:**
+- Use semantic HTML (`<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`)
+- Wrap in `<div className="overflow-x-auto">` for responsive horizontal scrolling
+
+**Theme-adaptive styling:**
+- Headers: `bg-gray-50 dark:bg-gray-800` with `text-gray-700 dark:text-gray-300`
+- Rows: Alternating with `hover:bg-gray-50 dark:hover:bg-gray-900/50`
+- Borders: `border-gray-200 dark:border-gray-800`
+- Text: `text-gray-900 dark:text-white` (primary), `text-gray-500 dark:text-gray-400` (secondary)
+
+**Interactive elements:**
+- Buttons in cells: Use brand colors (`bg-brand-500 hover:bg-brand-600`)
+- Status badges: Use semantic colors (success, error, warning)
+
+#### Common Features
+
+**Sorting:**
+```typescript
+import { getSortedRowModel } from "@tanstack/react-table";
+
+const table = useReactTable({
+	// ...
+	getSortedRowModel: getSortedRowModel(),
+});
+```
+
+**Filtering:**
+```typescript
+import { getFilteredRowModel } from "@tanstack/react-table";
+
+const table = useReactTable({
+	// ...
+	getFilteredRowModel: getFilteredRowModel(),
+});
+```
+
+**Pagination:**
+```typescript
+import { getPaginationRowModel } from "@tanstack/react-table";
+
+const table = useReactTable({
+	// ...
+	getPaginationRowModel: getPaginationRowModel(),
+	initialState: {
+		pagination: {
+			pageSize: 10,
+		},
+	},
+});
+```
+
+#### Example: Machines Table
+
+The machines table (`src/components/tables/TableMachines.tsx`) displays server information with:
+
+- Left column: Machine name (primary) with URL and IP (secondary, lighter)
+- Right column: "Connect Machine" button
+- Click handler to update Redux state with selected machine
+
+```typescript
+columns: [
+	{
+		accessorKey: "machineName",
+		header: "Machine",
+		cell: (info) => (
+			<div>
+				<div className="font-medium text-gray-900 dark:text-white">
+					{info.getValue()}
+				</div>
+				<div className="text-sm text-gray-500 dark:text-gray-400">
+					{info.row.original.urlFor404Api}
+				</div>
+				<div className="text-sm text-gray-500 dark:text-gray-400">
+					{info.row.original.localIpAddress}
+				</div>
+			</div>
+		),
+	},
+	{
+		id: "actions",
+		header: "Actions",
+		cell: (info) => (
+			<button
+				onClick={() => handleConnect(info.row.original)}
+				className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg"
+			>
+				Connect Machine
+			</button>
+		),
+	},
+];
+```
+
+#### Best Practices
+
+1. **Always use TypeScript interfaces** for data types and props
+2. **Memoize columns** with `useMemo` to prevent unnecessary re-renders
+3. **Keep table logic in the component** - don't split column definitions into separate files
+4. **Use flexRender** for all cell/header rendering (required by TanStack Table)
+5. **Handle loading states** - show skeleton or spinner while fetching data
+6. **Handle empty states** - display helpful message when no data exists
+7. **Make tables responsive** - use horizontal scrolling on mobile
+8. **Follow accessibility** - proper ARIA labels, keyboard navigation
+
+#### Integration with Redux
+
+When table actions need to update global state (e.g., selecting a machine):
+
+```typescript
+import { useAppDispatch } from "@/store/hooks";
+import { updateMachine } from "@/store/features/user/userSlice";
+
+const dispatch = useAppDispatch();
+
+const handleConnect = (machine: Machine) => {
+	dispatch(updateMachine({
+		machineName: machine.machineName,
+		urlFor404Api: machine.urlFor404Api,
+		nginxStoragePathOptions: machine.nginxStoragePathOptions,
+	}));
+};
 ```
 
 ## Design System
