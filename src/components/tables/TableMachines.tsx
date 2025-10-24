@@ -10,12 +10,13 @@ import {
 	SortingState,
 	FilterFn,
 } from "@tanstack/react-table";
-import { Machine } from "@/data/mockMachines";
+import { Machine } from "@/types/machine";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { connectMachine } from "@/store/features/user/userSlice";
 
 interface TableMachinesProps {
 	data: Machine[];
+	handleDeleteMachine: (machineId: string) => void;
 }
 
 // Custom filter function for searching Machine column (machineName, url, ip)
@@ -30,7 +31,10 @@ const machineFilterFn: FilterFn<Machine> = (row, columnId, filterValue) => {
 	);
 };
 
-export default function TableMachines({ data }: TableMachinesProps) {
+export default function TableMachines({
+	data,
+	handleDeleteMachine,
+}: TableMachinesProps) {
 	const dispatch = useAppDispatch();
 	const connectedMachineName = useAppSelector((s) => s.user.machineName);
 	const [sorting, setSorting] = useState<SortingState>([]);
@@ -65,6 +69,9 @@ export default function TableMachines({ data }: TableMachinesProps) {
 						<div className="text-sm text-gray-500 dark:text-gray-400">
 							{info.row.original.localIpAddress}
 						</div>
+						<div className="text-sm text-gray-500 dark:text-gray-400">
+							{info.row.original._id}
+						</div>
 					</div>
 				),
 			},
@@ -74,8 +81,7 @@ export default function TableMachines({ data }: TableMachinesProps) {
 				enableSorting: true,
 				enableColumnFilter: false,
 				// Accessor function returns 1 for connected, 0 for not connected
-				accessorFn: (row) =>
-					row.machineName === connectedMachineName ? 1 : 0,
+				accessorFn: (row) => (row.machineName === connectedMachineName ? 1 : 0),
 				cell: (info) => {
 					const isConnected =
 						info.row.original.machineName === connectedMachineName;
@@ -90,6 +96,23 @@ export default function TableMachines({ data }: TableMachinesProps) {
 							}`}
 						>
 							{isConnected ? "Connected" : "Connect Machine"}
+						</button>
+					);
+				},
+			},
+			{
+				// Delete button
+				id: "delete",
+				header: "Delete",
+				enableSorting: true,
+				enableColumnFilter: false,
+				cell: (info) => {
+					return (
+						<button
+							onClick={() => handleDeleteMachine(info.row.original._id)}
+							className="px-4 py-2 rounded-lg font-medium transition-colors bg-red-500 hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-500 text-white"
+						>
+							Delete
 						</button>
 					);
 				},

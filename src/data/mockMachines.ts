@@ -1,19 +1,4 @@
-export interface Machine {
-	_id: string;
-	machineName: string;
-	urlFor404Api: string;
-	localIpAddress: string;
-	userHomeDir?: string;
-	nginxStoragePathOptions: string[];
-	dateCreated: string;
-	dateLastModified: string;
-	__v: number;
-}
-
-export interface MachinesResponse {
-	result: boolean;
-	existingMachines: Machine[];
-}
+import { MachinesResponse } from "@/types/machine";
 
 export const mockMachinesData: MachinesResponse = {
 	result: true,

@@ -177,6 +177,54 @@ Path alias: `@/*` → `./src/*`
 
 Example: `import { AppHeader } from "@/layout/AppHeader"`
 
+### TypeScript Types
+
+**IMPORTANT:** All TypeScript interfaces and types should be organized in the `src/types/` directory, NOT co-located with mock data or components.
+
+**Directory structure:**
+
+```
+src/types/
+├── machine.ts         # Machine and MachinesResponse interfaces
+├── user.ts            # User-related types (if needed)
+└── [feature].ts       # Other feature-specific types
+```
+
+**Pattern:**
+
+```typescript
+// src/types/machine.ts
+export interface Machine {
+	_id: string;
+	machineName: string;
+	urlFor404Api: string;
+	localIpAddress: string;
+	userHomeDir?: string;
+	nginxStoragePathOptions: string[];
+	dateCreated: string;
+	dateLastModified: string;
+	__v: number;
+}
+
+export interface MachinesResponse {
+	result: boolean;
+	existingMachines: Machine[];
+}
+```
+
+**Usage:**
+
+```typescript
+import { Machine, MachinesResponse } from "@/types/machine";
+```
+
+**Benefits:**
+
+1. Centralized type definitions for easier maintenance
+2. Better reusability across components and mock data
+3. Clear separation of concerns
+4. Easier to find and update types
+
 ### Styling with Tailwind
 
 - Tailwind CSS v4 via `@tailwindcss/postcss`
@@ -726,7 +774,93 @@ When building new components or updating existing ones:
 
 ## Backend Integration
 
-While no API utilities currently exist in the codebase, backend calls follow this pattern:
+### Data Loading Pattern
+
+The 404 Web supports both **mock data mode** (for development) and **API mode** (for production). This is controlled by the `NEXT_PUBLIC_MODE` environment variable.
+
+**Pattern for data fetching in pages:**
+
+```typescript
+"use client";
+import { useState, useEffect } from "react";
+import { Machine } from "@/types/machine";
+import { mockMachinesData } from "@/data/mockMachines";
+
+export default function YourPage() {
+	const [data, setData] = useState<Machine[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			setLoading(true);
+			setError(null);
+
+			try {
+				// Check if we're in mock data mode
+				if (process.env.NEXT_PUBLIC_MODE === "mock_data") {
+					// Use mock data
+					setData(mockMachinesData.existingMachines);
+					setLoading(false);
+				} else {
+					// Fetch from API
+					const response = await fetch(
+						`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines`
+					);
+
+					if (!response.ok) {
+						throw new Error(
+							`Failed to fetch: ${response.status} ${response.statusText}`
+						);
+					}
+
+					const data = await response.json();
+
+					if (data.result && Array.isArray(data.existingMachines)) {
+						setData(data.existingMachines);
+					} else {
+						throw new Error("Invalid response format from API");
+					}
+
+					setLoading(false);
+				}
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : "Failed to fetch data"
+				);
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, []);
+
+	// Render loading state
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	// Render error state
+	if (error) {
+		return <div className="text-error-500">{error}</div>;
+	}
+
+	// Render data
+	return <YourTable data={data} />;
+}
+```
+
+**Key principles:**
+
+1. Always handle three states: loading, error, and success
+2. Use mock data when `NEXT_PUBLIC_MODE === "mock_data"`
+3. Fetch from API otherwise
+4. Validate API response structure before setting state
+5. Provide clear error messages
+
+### API Request Pattern
+
+Basic fetch pattern for API calls:
 
 ```typescript
 const response = await fetch(
@@ -737,10 +871,46 @@ const response = await fetch(
 );
 ```
 
+### Mock Data Organization
+
+Mock data for development is stored in `src/data/` directory:
+
+```
+src/data/
+├── mockMachines.ts    # Mock machines data
+├── mockApps.ts        # Mock apps data (if needed)
+└── [feature].ts       # Other mock data
+```
+
+**Pattern:**
+
+```typescript
+// src/data/mockMachines.ts
+import { Machine, MachinesResponse } from "@/types/machine";
+
+export const mockMachinesData: MachinesResponse = {
+	result: true,
+	existingMachines: [
+		{
+			_id: "123",
+			machineName: "server01",
+			// ... rest of fields
+		},
+	],
+};
+```
+
+**Important:** Mock data files should import types from `src/types/`, not define them.
+
+### Environment Variables
+
 Environment variables (not in repo, add to `.env.local`):
 
 - `NEXT_PUBLIC_API_BASE_URL`: Base URL for the404back API instances
-- `NEXT_PUBLIC_MODE`: Set to "workstation" for dev mode (prefills login)
+- `NEXT_PUBLIC_MODE`:
+  - Set to `"mock_data"` for development with mock data
+  - Set to `"workstation"` for dev mode with prefilled login
+  - Leave unset or set to `"production"` for production mode
 
 ## Template Notes
 
