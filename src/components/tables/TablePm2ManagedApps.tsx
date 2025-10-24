@@ -15,6 +15,7 @@ import { Pm2App } from "@/types/pm2App";
 interface TablePm2ManagedAppsProps {
 	data: Pm2App[];
 	handleToggleStatus: (appName: string, currentStatus: string) => void;
+	handleViewLogs: (appName: string) => void;
 }
 
 // Custom filter function for searching apps (name, port, status)
@@ -51,6 +52,7 @@ const formatUptime = (ms: number): string => {
 export default function TablePm2ManagedApps({
 	data,
 	handleToggleStatus,
+	handleViewLogs,
 }: TablePm2ManagedAppsProps) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [globalFilter, setGlobalFilter] = useState("");
@@ -62,21 +64,27 @@ export default function TablePm2ManagedApps({
 				header: "App",
 				enableSorting: true,
 				enableColumnFilter: false,
-				cell: (info) => (
-					<div>
-						<div className="font-medium text-gray-900 dark:text-white">
-							{info.getValue() as string}
+				cell: (info) => {
+					const appName = info.getValue() as string;
+					return (
+						<div>
+							<button
+								onClick={() => handleViewLogs(appName)}
+								className="font-medium text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-500 hover:underline transition-colors text-left"
+							>
+								{appName}
+							</button>
+							<div className="text-sm text-gray-500 dark:text-gray-400">
+								CPU: {info.row.original.cpu}% | Memory:{" "}
+								{formatMemory(info.row.original.memory)}
+							</div>
+							<div className="text-sm text-gray-500 dark:text-gray-400">
+								Uptime: {formatUptime(info.row.original.uptime)} | Restarts:{" "}
+								{info.row.original.restarts}
+							</div>
 						</div>
-						<div className="text-sm text-gray-500 dark:text-gray-400">
-							CPU: {info.row.original.cpu}% | Memory:{" "}
-							{formatMemory(info.row.original.memory)}
-						</div>
-						<div className="text-sm text-gray-500 dark:text-gray-400">
-							Uptime: {formatUptime(info.row.original.uptime)} | Restarts:{" "}
-							{info.row.original.restarts}
-						</div>
-					</div>
-				),
+					);
+				},
 			},
 			{
 				accessorKey: "port",
@@ -117,7 +125,7 @@ export default function TablePm2ManagedApps({
 				},
 			},
 		],
-		[handleToggleStatus]
+		[handleToggleStatus, handleViewLogs]
 	);
 
 	const table = useReactTable({

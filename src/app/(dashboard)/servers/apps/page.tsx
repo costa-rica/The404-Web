@@ -5,12 +5,17 @@ import { mockPm2AppsData } from "@/data/mockPm2Apps";
 import { Modal } from "@/components/ui/modal";
 import { ModalInformationYesOrNo } from "@/components/ui/modal/ModalInformationYesOrNo";
 import { ModalInformationOk } from "@/components/ui/modal/ModalInformationOk";
+import { ModalPm2AppLogs } from "@/components/ui/modal/ModalPm2AppLogs";
 import { Pm2App } from "@/types/pm2App";
 import { useAppSelector } from "@/store/hooks";
 
 export default function AppsPage() {
 	const [toggleModalOpen, setToggleModalOpen] = useState(false);
 	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [logsModalOpen, setLogsModalOpen] = useState(false);
+	const [selectedAppForLogs, setSelectedAppForLogs] = useState<string | null>(
+		null
+	);
 	const [infoModalData, setInfoModalData] = useState<{
 		title: string;
 		message: string;
@@ -91,6 +96,11 @@ export default function AppsPage() {
 	useEffect(() => {
 		fetchApps();
 	}, [fetchApps]);
+
+	const handleViewLogsClick = (appName: string) => {
+		setSelectedAppForLogs(appName);
+		setLogsModalOpen(true);
+	};
 
 	const handleToggleStatusClick = (appName: string, currentStatus: string) => {
 		setAppToToggle({ name: appName, currentStatus });
@@ -218,6 +228,7 @@ export default function AppsPage() {
 				<TablePm2ManagedApps
 					data={apps}
 					handleToggleStatus={handleToggleStatusClick}
+					handleViewLogs={handleViewLogsClick}
 				/>
 			)}
 
@@ -253,6 +264,26 @@ export default function AppsPage() {
 					variant={infoModalData.variant}
 					onClose={() => setInfoModalOpen(false)}
 				/>
+			</Modal>
+
+			{/* Logs Modal */}
+			<Modal
+				isOpen={logsModalOpen}
+				onClose={() => {
+					setLogsModalOpen(false);
+					setSelectedAppForLogs(null);
+				}}
+				className="max-w-none"
+			>
+				{selectedAppForLogs && (
+					<ModalPm2AppLogs
+						appName={selectedAppForLogs}
+						onClose={() => {
+							setLogsModalOpen(false);
+							setSelectedAppForLogs(null);
+						}}
+					/>
+				)}
 			</Modal>
 		</div>
 	);
