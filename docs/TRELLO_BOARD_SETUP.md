@@ -37,7 +37,7 @@ The project is exploratory, so placeholders and mock data are included to simula
 
   - Define `.env.local` structure for both projects
   - Add placeholders for:
-    - `NEXT_PUBLIC_API_BASE_URL`
+    - `NEXT_PUBLIC_EXTERNAL_API_BASE_URL`
     - `MONGODB_URI`
     - `JWT_SECRET`
   - Document example `.env` file
@@ -263,7 +263,7 @@ The project is exploratory, so placeholders and mock data are included to simula
   - Configure Nginx to serve via domain/subdomain (e.g. `the404.example.com`)
   - Set environment variables:
     - `NEXT_PUBLIC_MODE=workstation`
-    - `NEXT_PUBLIC_API_BASE_URL=http://nws-the404:8000`
+    - `NEXT_PUBLIC_EXTERNAL_API_BASE_URL=http://nws-the404:8000`
 
 - **The404-API Deployment (on each VM)**
 

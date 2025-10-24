@@ -151,7 +151,7 @@ All non-auth API calls continue to use direct fetch to backend:
 
 ```typescript
 const response = await fetch(
-	`${process.env.NEXT_PUBLIC_API_BASE_URL}/endpoint`,
+	`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/endpoint`,
 	{
 		headers: {
 			"Content-Type": "application/json",
@@ -306,7 +306,7 @@ While no API utilities currently exist in the codebase, backend calls follow thi
 
 ```typescript
 const response = await fetch(
-	`${process.env.NEXT_PUBLIC_API_BASE_URL}/endpoint`,
+	`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/endpoint`,
 	{
 		headers: { Authorization: `Bearer ${token}` },
 	}
@@ -315,7 +315,7 @@ const response = await fetch(
 
 Environment variables (not in repo, add to `.env.local`):
 
-- `NEXT_PUBLIC_API_BASE_URL`: Base URL for the404back API instances
+- `NEXT_PUBLIC_EXTERNAL_API_BASE_URL`: Base URL for the404back API instances
 - `NEXT_PUBLIC_MODE`: Set to "workstation" for dev mode (prefills login)
 
 ## Template Notes

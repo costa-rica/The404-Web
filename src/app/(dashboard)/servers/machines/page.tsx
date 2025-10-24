@@ -53,7 +53,7 @@ export default function MachinesPage() {
 			} else {
 				// Fetch from API
 				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines`,
+					`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/machines`,
 					{
 						method: "GET",
 						headers: {
@@ -80,9 +80,7 @@ export default function MachinesPage() {
 				setLoading(false);
 			}
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "Failed to fetch machines"
-			);
+			setError(err instanceof Error ? err.message : "Failed to fetch machines");
 			setLoading(false);
 		}
 	}, [token]);
@@ -100,7 +98,7 @@ export default function MachinesPage() {
 		console.log("Adding machine:", machineData);
 
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines`,
+			`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/machines`,
 			{
 				method: "POST",
 				headers: {
@@ -127,14 +125,14 @@ export default function MachinesPage() {
 			try {
 				// Refetch machines to get complete server-populated data
 				await fetchMachines();
-				showInfoModal(
-					"Machine Added",
-					`Successfully added machine`,
-					"success"
-				);
+				showInfoModal("Machine Added", `Successfully added machine`, "success");
 			} catch (error) {
 				console.error("Error refetching machines:", error);
-				showInfoModal("Warning", "Machine added but failed to refresh list. Please refresh the page.", "warning");
+				showInfoModal(
+					"Warning",
+					"Machine added but failed to refresh list. Please refresh the page.",
+					"warning"
+				);
 			}
 		} else {
 			const errorMessage =
@@ -156,7 +154,7 @@ export default function MachinesPage() {
 		console.log("Deleting machine:", machineToDelete.id);
 
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines/${machineToDelete.id}`,
+			`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/machines/${machineToDelete.id}`,
 			{
 				method: "DELETE",
 				headers: {
@@ -279,10 +277,7 @@ export default function MachinesPage() {
 			</Modal>
 
 			{/* Information Modal */}
-			<Modal
-				isOpen={infoModalOpen}
-				onClose={() => setInfoModalOpen(false)}
-			>
+			<Modal isOpen={infoModalOpen} onClose={() => setInfoModalOpen(false)}>
 				<ModalInformationOk
 					title={infoModalData.title}
 					message={infoModalData.message}

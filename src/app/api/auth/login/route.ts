@@ -6,9 +6,9 @@ export async function POST(request: NextRequest) {
 	try {
 		const { email, password } = await request.json();
 
-		// Call the backend API
+		// Call the backend API (internal route from server)
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`,
+			`${process.env.NEXT_PUBLIC_INTERNAL_API_BASE_URL}/users/login`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },

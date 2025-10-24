@@ -32,7 +32,11 @@ export default function ForgotPasswordForm() {
 		console.log("Forgot password requested for:", email);
 
 		if (!email) {
-			showInfoModal("Email Required", "Please enter your email address", "warning");
+			showInfoModal(
+				"Email Required",
+				"Please enter your email address",
+				"warning"
+			);
 			return;
 		}
 
@@ -40,7 +44,7 @@ export default function ForgotPasswordForm() {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/request-reset-password-email`,
+				`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/users/request-reset-password-email`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -67,7 +71,11 @@ export default function ForgotPasswordForm() {
 			}
 		} catch (error) {
 			console.error("Error requesting password reset:", error);
-			showInfoModal("Connection Error", "Error connecting to server. Please try again.", "error");
+			showInfoModal(
+				"Connection Error",
+				"Error connecting to server. Please try again.",
+				"error"
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -92,7 +100,8 @@ export default function ForgotPasswordForm() {
 							Check your email
 						</h2>
 						<p className="text-lg text-gray-700 dark:text-gray-400">
-							If an account exists for {email}, you will receive password reset instructions.
+							If an account exists for {email}, you will receive password reset
+							instructions.
 						</p>
 						<div className="mt-8">
 							<Link

@@ -39,12 +39,20 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
 		// Validation
 		if (!password) {
-			showInfoModal("Password Required", "Please enter a new password", "warning");
+			showInfoModal(
+				"Password Required",
+				"Please enter a new password",
+				"warning"
+			);
 			return;
 		}
 
 		if (password.length < 2) {
-			showInfoModal("Password Too Short", "Password must be at least 2 characters long", "warning");
+			showInfoModal(
+				"Password Too Short",
+				"Password must be at least 2 characters long",
+				"warning"
+			);
 			return;
 		}
 
@@ -52,7 +60,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/reset-password-with-new-password`,
+				`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/users/reset-password-with-new-password`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -79,7 +87,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 			}
 		} catch (error) {
 			console.error("Error resetting password:", error);
-			showInfoModal("Connection Error", "Error connecting to server. Please try again.", "error");
+			showInfoModal(
+				"Connection Error",
+				"Error connecting to server. Please try again.",
+				"error"
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -104,7 +116,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 							Password reset successful
 						</h2>
 						<p className="text-lg text-gray-700 dark:text-gray-400">
-							Your password has been updated. You can now sign in with your new password.
+							Your password has been updated. You can now sign in with your new
+							password.
 						</p>
 						<div className="mt-8">
 							<Link
