@@ -54,23 +54,17 @@ export default function LoginForm() {
 	}, [userReducer.token, router]);
 
 	const handleClickLogin = async () => {
-		console.log(
-			"Login ---> API URL:",
-			`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`
-		);
+		console.log("Login ---> API URL:", `/api/auth/login`);
 		console.log("- handleClickLogin 👀");
 		console.log("- email:", email);
 
 		const bodyObj = { email, password };
 
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`,
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(bodyObj),
-			}
-		);
+		const response = await fetch("/api/auth/login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(bodyObj),
+		});
 
 		console.log("Received response:", response.status);
 
@@ -81,12 +75,20 @@ export default function LoginForm() {
 			resJson = await response.json();
 		}
 
-		if (response.ok) {
-			// if (resJson.user.isAdminForKvManagerWebsite) {
+		if (response.ok && resJson.success) {
 			console.log(resJson);
-			resJson.email = email;
 			try {
-				dispatch(loginUser(resJson));
+				// Dispatch login with token and user data
+				dispatch(
+					loginUser({
+						token: resJson.token,
+						user: {
+							username: resJson.user.username,
+							email: resJson.user.email,
+							isAdmin: resJson.user.isAdmin,
+						},
+					})
+				);
 				router.push("/servers/machines");
 			} catch (error) {
 				console.error("Error logging in:", error);

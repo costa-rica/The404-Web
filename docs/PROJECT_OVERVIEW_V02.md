@@ -43,79 +43,28 @@ o No Turbopack -> this causes problems with the svg icons (src/icons)
 
 This document is the first version. It will serve as a proof of concept that we can have ChatGPT create tickets in Trello and have both ChatGPT and Claude read the tickets. The goal is to build both The 404 Web and The 404 API projects in a non-isolated way using the Trello tickets as context for how the apps should communicate with each other.
 
-## 2. The404-Web Styling
+## 2. The404-Web Styling Guide
 
-### 2.1. Color Pallet
+The 404 Web uses a **terminal-inspired design language** — minimalist, functional, with high contrast and readability that evokes classic CRT terminal environments.
 
-The404-Web has a dark and light mode.
+### Color Palette
 
-#### 2.1.1 Dark Mode
+The application uses a fully implemented terminal-inspired color system with a 10-step scale for each color category:
 
-I would like the dark mode to have the following color pallet :
+- **Brand (Terminal Orange)**: `#e95420` - Primary actions, links, active states
+- **Gray (True Black)**: `#000000` to `#fcfcfc` - Neutral structure, backgrounds, text hierarchy
+- **Success (Phosphor Green)**: `#10b981` - Positive states, confirmations
+- **Error (Bright Red)**: `#ef4444` - Negative states, destructive actions
+- **Warning (Amber)**: `#fbbf24` - Caution states, important notices
+- **Info (Terminal Cyan)**: `#06b6d4` - Informational content, secondary highlights
 
-- **Background: `#34385A`**
-  Main dashboard background. Dark navy tone reminiscent of terminal environments.
+All colors follow a standardized 10-step scale (25-950) defined in `src/app/globals.css`. Components reference these scales by name, allowing easy customization without code changes.
 
-- **Highlight / Accent: `#FA9F15`**
-  Used for hover states, primary buttons, and visual emphasis. Amber tone inspired by CRT terminals.
+**For complete color scales, component usage examples, and customization guidelines, see [docs/STYLE_GUIDE.md](./docs/STYLE_GUIDE.md).**
 
-- **Dark Text: `#000000`**
-  Used for light background sections or cards.
+### Typography
 
-- **Medium Text: `#888787`**
-  Used for secondary text, timestamps, or labels.
-
-- **Light Text: `#FFFFFF`**
-  Used for primary text on dark backgrounds.
-
-- **Error / Warning Red: `#8B0419`**
-  Used sparingly for critical alerts or destructive actions.
-
-#### 2.1.2 Light Mode
-
-I would like the light mode to have the following color pallet :
-
-- **Background: `#F7F8FC`**
-  Clean off-white with a subtle blue tint for the main dashboard background.
-
-- **Surface / Card Background: `#FFFFFF`**
-  Panels, cards, and modals — crisp and neutral.
-
-- **Primary Accent: `#FA9F15`**
-  Same amber as dark mode for brand consistency; use for primary buttons and active states.
-
-- **Secondary Accent: `#3D5AFE`**
-  Vibrant indigo-blue for secondary actions and highlights; complements the amber.
-
-- **Primary Text: `#0F172A`**
-  Deep slate-blue for high-contrast body text on light backgrounds.
-
-- **Secondary Text: `#6B7280`**
-  Medium gray for secondary information, timestamps, and labels.
-
-- **Disabled / Muted Text: `#9CA3AF`**
-  Light gray for placeholders and disabled elements.
-
-- **Border / Divider: `#E2E8F0`**
-  Soft neutral for separators, table borders, and outlines.
-
-- **Hover Background: `#F1F5F9`**
-  Subtle gray tint for hover states on list items and rows.
-
-- **Error / Warning Red: `#D90429`**
-  Clear, attention-grabbing red for errors and destructive actions.
-
-- **Success Green: `#16A34A`**
-  Positive state (e.g., server online) badges and confirmations.
-
-- **Info Blue: `#2563EB`**
-  Informational banners, non-critical notices, and links.
-
-### 2.2. Typography
-
-- **Primary Font: JetBrains Mono, monospace**
-  Used across all text to reinforce the technical and terminal-style design.
-  Fallback: `monospace`
+**Font**: JetBrains Mono (monospace) - Loaded via Google Fonts in `src/app/layout.tsx`
 
 ## 3. Sidebar menu (The404-Web)
 

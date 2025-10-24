@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { logoutUserFully } from "../store/features/user/userSlice";
 import {
 	ChevronDownIcon,
@@ -57,9 +57,16 @@ const AppSidebar: React.FC = () => {
 	const pathname = usePathname();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
+	const { username, token } = useAppSelector((state) => state.user);
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
+		// Clear the HTTP-only cookie via API route
+		await fetch("/api/auth/logout", { method: "POST" });
+
+		// Clear Redux state
 		dispatch(logoutUserFully());
+
+		// Redirect to login
 		router.push("/login");
 	};
 
@@ -298,6 +305,19 @@ const AppSidebar: React.FC = () => {
 				<ThemeToggleButton />
 			</div>
 			<div className="pt-20 flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+				{/* Username Display */}
+				{(isExpanded || isMobileOpen) && (
+					<div className="mb-6 px-2 py-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+						<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Logged in as:</p>
+						<p className="text-base font-semibold text-gray-900 dark:text-white truncate">
+							{username || "Not logged in"}
+						</p>
+						<p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+							Token: {token ? "✓ Present" : "✗ Missing"}
+						</p>
+					</div>
+				)}
+
 				<nav className="mb-6">
 					<div className="flex flex-col gap-4">
 						<div>
