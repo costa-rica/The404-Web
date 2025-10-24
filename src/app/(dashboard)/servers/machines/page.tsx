@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import TableMachines from "@/components/tables/TableMachines";
 import { mockMachinesData } from "@/data/mockMachines";
 import { Modal } from "@/components/ui/modal";
@@ -40,56 +40,56 @@ export default function MachinesPage() {
 		setInfoModalOpen(true);
 	};
 
-	useEffect(() => {
-		const fetchMachines = async () => {
-			setLoading(true);
-			setError(null);
+	const fetchMachines = useCallback(async () => {
+		setLoading(true);
+		setError(null);
 
-			try {
-				// Check if we're in mock data mode
-				if (process.env.NEXT_PUBLIC_MODE === "mock_data") {
-					// Use mock data
-					setMachines(mockMachinesData.existingMachines);
-					setLoading(false);
-				} else {
-					// Fetch from API
-					const response = await fetch(
-						`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines`,
-						{
-							method: "GET",
-							headers: {
-								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
-							},
-						}
-					);
-
-					if (!response.ok) {
-						throw new Error(
-							`Failed to fetch machines: ${response.status} ${response.statusText}`
-						);
+		try {
+			// Check if we're in mock data mode
+			if (process.env.NEXT_PUBLIC_MODE === "mock_data") {
+				// Use mock data
+				setMachines(mockMachinesData.existingMachines);
+				setLoading(false);
+			} else {
+				// Fetch from API
+				const response = await fetch(
+					`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
 					}
-
-					const data = await response.json();
-
-					if (data.result && Array.isArray(data.existingMachines)) {
-						setMachines(data.existingMachines);
-					} else {
-						throw new Error("Invalid response format from API");
-					}
-
-					setLoading(false);
-				}
-			} catch (err) {
-				setError(
-					err instanceof Error ? err.message : "Failed to fetch machines"
 				);
+
+				if (!response.ok) {
+					throw new Error(
+						`Failed to fetch machines: ${response.status} ${response.statusText}`
+					);
+				}
+
+				const data = await response.json();
+
+				if (data.result && Array.isArray(data.existingMachines)) {
+					setMachines(data.existingMachines);
+				} else {
+					throw new Error("Invalid response format from API");
+				}
+
 				setLoading(false);
 			}
-		};
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "Failed to fetch machines"
+			);
+			setLoading(false);
+		}
+	}, [token]);
 
+	useEffect(() => {
 		fetchMachines();
-	}, []);
+	}, [fetchMachines]);
 
 	const handleAddMachine = async (machineData: {
 		urlFor404Api: string;
@@ -121,33 +121,20 @@ export default function MachinesPage() {
 		}
 
 		if (response.ok) {
-			// if (resJson.user.isAdminForKvManagerWebsite) {
-			console.log(resJson);
-			// resJson.email = email;
+			console.log("Machine added successfully:", resJson);
+			setIsModalOpen(false);
+
 			try {
-				// TODO: Add dispatch for adding machine
-				const newMachine = {
-					_id: resJson._id,
-					machineName: resJson.machineName,
-					urlFor404Api: machineData.urlFor404Api,
-					localIpAddress: resJson.localIpAddress,
-					userHomeDir: machineData.userHomeDir,
-					nginxStoragePathOptions: machineData.nginxStoragePathOptions,
-					dateCreated: resJson.dateCreated,
-					dateLastModified: resJson.dateLastModified,
-					__v: resJson.__v,
-				};
-				setMachines((prevMachines) => [...prevMachines, newMachine]);
-				setIsModalOpen(false);
+				// Refetch machines to get complete server-populated data
+				await fetchMachines();
 				showInfoModal(
 					"Machine Added",
-					`Successfully added machine: ${newMachine.machineName}`,
+					`Successfully added machine`,
 					"success"
 				);
 			} catch (error) {
-				console.error("Error adding machine:", error);
-				setIsModalOpen(false);
-				showInfoModal("Error", "Error adding machine", "error");
+				console.error("Error refetching machines:", error);
+				showInfoModal("Warning", "Machine added but failed to refresh list. Please refresh the page.", "warning");
 			}
 		} else {
 			const errorMessage =
