@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/store/features/user/userSlice";
 import { useTheme } from "@/context/ThemeContext";
+import { Modal } from "@/components/ui/modal";
+import { ModalInformationOk } from "@/components/ui/modal/ModalInformationOk";
 
 // export default function SignInForm() {
 export default function LoginForm() {
@@ -16,11 +18,30 @@ export default function LoginForm() {
 	const [password, passwordSetter] = useState(
 		process.env.NEXT_PUBLIC_MODE === "workstation" ? "test" : ""
 	);
+	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [infoModalData, setInfoModalData] = useState<{
+		title: string;
+		message: string;
+		variant: "info" | "success" | "error" | "warning";
+	}>({
+		title: "",
+		message: "",
+		variant: "info",
+	});
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const { theme } = useTheme();
 	// const userReducer = useSelector((state) => state.user);
 	const userReducer = useAppSelector((s) => s.user);
+
+	const showInfoModal = (
+		title: string,
+		message: string,
+		variant: "info" | "success" | "error" | "warning" = "info"
+	) => {
+		setInfoModalData({ title, message, variant });
+		setInfoModalOpen(true);
+	};
 
 	useEffect(() => {
 		// Auto-redirect if user is already logged in
@@ -69,13 +90,20 @@ export default function LoginForm() {
 				router.push("/servers/machines");
 			} catch (error) {
 				console.error("Error logging in:", error);
-				alert("Error logging in");
+				showInfoModal("Error", "Error logging in", "error");
 			}
 		} else {
 			const errorMessage =
 				resJson?.error || `There was a server error: ${response.status}`;
-			alert(errorMessage);
+			showInfoModal("Login Failed", errorMessage, "error");
 		}
+	};
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		console.log("Submitted email:", email);
+		console.log("Submitted password:", password);
+		handleClickLogin();
 	};
 
 	return (
@@ -91,7 +119,7 @@ export default function LoginForm() {
 
 			{/* Login Form */}
 			<div className="w-full max-w-2xl">
-				<form className="space-y-8">
+				<form onSubmit={handleSubmit} className="space-y-8">
 					{/* Email Input */}
 					<div>
 						<input
@@ -127,12 +155,7 @@ export default function LoginForm() {
 					{/* Sign In Button */}
 					<div>
 						<button
-							type="button"
-							onClick={() => {
-								console.log("Submitted email:", email);
-								console.log("Submitted password:", password);
-								handleClickLogin();
-							}}
+							type="submit"
 							className="w-full px-6 py-5 text-3xl font-semibold text-white bg-brand-500 hover:bg-brand-600 dark:bg-brand-400 dark:hover:bg-brand-500 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400"
 						>
 							Sign in
@@ -150,6 +173,16 @@ export default function LoginForm() {
 					</div>
 				</form>
 			</div>
+
+			{/* Information Modal */}
+			<Modal isOpen={infoModalOpen} onClose={() => setInfoModalOpen(false)}>
+				<ModalInformationOk
+					title={infoModalData.title}
+					message={infoModalData.message}
+					variant={infoModalData.variant}
+					onClose={() => setInfoModalOpen(false)}
+				/>
+			</Modal>
 		</div>
 	);
 }

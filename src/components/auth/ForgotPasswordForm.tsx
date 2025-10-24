@@ -1,17 +1,38 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
+import { Modal } from "@/components/ui/modal";
+import { ModalInformationOk } from "@/components/ui/modal/ModalInformationOk";
 
 export default function ForgotPasswordForm() {
 	const [email, setEmail] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [infoModalData, setInfoModalData] = useState<{
+		title: string;
+		message: string;
+		variant: "info" | "success" | "error" | "warning";
+	}>({
+		title: "",
+		message: "",
+		variant: "info",
+	});
+
+	const showInfoModal = (
+		title: string,
+		message: string,
+		variant: "info" | "success" | "error" | "warning" = "info"
+	) => {
+		setInfoModalData({ title, message, variant });
+		setInfoModalOpen(true);
+	};
 
 	const handleSubmit = async () => {
 		console.log("Forgot password requested for:", email);
 
 		if (!email) {
-			alert("Please enter your email address");
+			showInfoModal("Email Required", "Please enter your email address", "warning");
 			return;
 		}
 
@@ -42,11 +63,11 @@ export default function ForgotPasswordForm() {
 			} else {
 				const errorMessage =
 					resJson?.error || `There was a server error: ${response.status}`;
-				alert(errorMessage);
+				showInfoModal("Error", errorMessage, "error");
 			}
 		} catch (error) {
 			console.error("Error requesting password reset:", error);
-			alert("Error connecting to server. Please try again.");
+			showInfoModal("Connection Error", "Error connecting to server. Please try again.", "error");
 		} finally {
 			setIsLoading(false);
 		}
@@ -135,6 +156,16 @@ export default function ForgotPasswordForm() {
 					</div>
 				</form>
 			</div>
+
+			{/* Information Modal */}
+			<Modal isOpen={infoModalOpen} onClose={() => setInfoModalOpen(false)}>
+				<ModalInformationOk
+					title={infoModalData.title}
+					message={infoModalData.message}
+					variant={infoModalData.variant}
+					onClose={() => setInfoModalOpen(false)}
+				/>
+			</Modal>
 		</div>
 	);
 }

@@ -4,15 +4,41 @@ import TableMachines from "@/components/tables/TableMachines";
 import { mockMachinesData } from "@/data/mockMachines";
 import { Modal } from "@/components/ui/modal";
 import { ModalAddMachine } from "@/components/ui/modal/ModalAddMachine";
+import { ModalInformationYesOrNo } from "@/components/ui/modal/ModalInformationYesOrNo";
+import { ModalInformationOk } from "@/components/ui/modal/ModalInformationOk";
 import { Machine } from "@/types/machine";
 import { useAppSelector } from "@/store/hooks";
 
 export default function MachinesPage() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [infoModalData, setInfoModalData] = useState<{
+		title: string;
+		message: string;
+		variant: "info" | "success" | "error" | "warning";
+	}>({
+		title: "",
+		message: "",
+		variant: "info",
+	});
+	const [machineToDelete, setMachineToDelete] = useState<{
+		id: string;
+		name: string;
+	} | null>(null);
 	const [machines, setMachines] = useState<Machine[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const token = useAppSelector((state) => state.user.token);
+
+	const showInfoModal = (
+		title: string,
+		message: string,
+		variant: "info" | "success" | "error" | "warning" = "info"
+	) => {
+		setInfoModalData({ title, message, variant });
+		setInfoModalOpen(true);
+	};
 
 	useEffect(() => {
 		const fetchMachines = async () => {
@@ -112,27 +138,38 @@ export default function MachinesPage() {
 					__v: resJson.__v,
 				};
 				setMachines((prevMachines) => [...prevMachines, newMachine]);
+				setIsModalOpen(false);
+				showInfoModal(
+					"Machine Added",
+					`Successfully added machine: ${newMachine.machineName}`,
+					"success"
+				);
 			} catch (error) {
 				console.error("Error adding machine:", error);
-				alert("Error adding machine");
+				setIsModalOpen(false);
+				showInfoModal("Error", "Error adding machine", "error");
 			}
 		} else {
 			const errorMessage =
 				resJson?.error || `There was a server error: ${response.status}`;
-			alert(errorMessage);
+			setIsModalOpen(false);
+			showInfoModal("Error", errorMessage, "error");
 		}
-
-		// For now, just close the modal
-		setIsModalOpen(false);
 		// alert("Machine added successfully! (Mock)");
 	};
 
-	const handleDeleteMachine = async (machineId: string) => {
-		// TODO: Replace with actual API call
-		console.log("Deleting machine:", machineId);
+	const handleDeleteMachineClick = (machineId: string, machineName: string) => {
+		setMachineToDelete({ id: machineId, name: machineName });
+		setDeleteModalOpen(true);
+	};
+
+	const handleDeleteMachineConfirm = async () => {
+		if (!machineToDelete) return;
+
+		console.log("Deleting machine:", machineToDelete.id);
 
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines/${machineId}`,
+			`${process.env.NEXT_PUBLIC_API_BASE_URL}/machines/${machineToDelete.id}`,
 			{
 				method: "DELETE",
 				headers: {
@@ -154,18 +191,29 @@ export default function MachinesPage() {
 		if (response.ok) {
 			console.log(resJson);
 			try {
-				// TODO: Add dispatch for deleting machine
 				setMachines((prevMachines) =>
-					prevMachines.filter((machine) => machine._id !== machineId)
+					prevMachines.filter((machine) => machine._id !== machineToDelete.id)
+				);
+				const deletedMachineName = machineToDelete.name;
+				setDeleteModalOpen(false);
+				setMachineToDelete(null);
+				showInfoModal(
+					"Machine Deleted",
+					`Successfully deleted machine: ${deletedMachineName}`,
+					"success"
 				);
 			} catch (error) {
 				console.error("Error deleting machine:", error);
-				alert("Error deleting machine");
+				setDeleteModalOpen(false);
+				setMachineToDelete(null);
+				showInfoModal("Error", "Error deleting machine", "error");
 			}
 		} else {
 			const errorMessage =
 				resJson?.error || `There was a server error: ${response.status}`;
-			alert(errorMessage);
+			setDeleteModalOpen(false);
+			setMachineToDelete(null);
+			showInfoModal("Error", errorMessage, "error");
 		}
 	};
 
@@ -209,7 +257,7 @@ export default function MachinesPage() {
 			{!loading && !error && (
 				<TableMachines
 					data={machines}
-					handleDeleteMachine={handleDeleteMachine}
+					handleDeleteMachine={handleDeleteMachineClick}
 				/>
 			)}
 
@@ -218,6 +266,41 @@ export default function MachinesPage() {
 				<ModalAddMachine
 					onClose={() => setIsModalOpen(false)}
 					onSubmit={handleAddMachine}
+				/>
+			</Modal>
+
+			{/* Delete Confirmation Modal */}
+			<Modal
+				isOpen={deleteModalOpen}
+				onClose={() => {
+					setDeleteModalOpen(false);
+					setMachineToDelete(null);
+				}}
+			>
+				<ModalInformationYesOrNo
+					title="Delete Machine"
+					message={`Are you sure you want to delete "${machineToDelete?.name}"? This action cannot be undone.`}
+					onYes={handleDeleteMachineConfirm}
+					onClose={() => {
+						setDeleteModalOpen(false);
+						setMachineToDelete(null);
+					}}
+					yesButtonText="Delete"
+					noButtonText="Cancel"
+					yesButtonStyle="danger"
+				/>
+			</Modal>
+
+			{/* Information Modal */}
+			<Modal
+				isOpen={infoModalOpen}
+				onClose={() => setInfoModalOpen(false)}
+			>
+				<ModalInformationOk
+					title={infoModalData.title}
+					message={infoModalData.message}
+					variant={infoModalData.variant}
+					onClose={() => setInfoModalOpen(false)}
 				/>
 			</Modal>
 		</div>

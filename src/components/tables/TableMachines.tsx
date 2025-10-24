@@ -16,7 +16,7 @@ import { connectMachine } from "@/store/features/user/userSlice";
 
 interface TableMachinesProps {
 	data: Machine[];
-	handleDeleteMachine: (machineId: string) => void;
+	handleDeleteMachine: (machineId: string, machineName: string) => void;
 }
 
 // Custom filter function for searching Machine column (machineName, url, ip)
@@ -104,13 +104,18 @@ export default function TableMachines({
 				// Delete button
 				id: "delete",
 				header: "Delete",
-				enableSorting: true,
+				enableSorting: false,
 				enableColumnFilter: false,
 				cell: (info) => {
 					return (
 						<button
-							onClick={() => handleDeleteMachine(info.row.original._id)}
-							className="px-4 py-2 rounded-lg font-medium transition-colors bg-red-500 hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-500 text-white"
+							onClick={() =>
+								handleDeleteMachine(
+									info.row.original._id,
+									info.row.original.machineName
+								)
+							}
+							className="px-4 py-2 rounded-lg font-medium transition-colors bg-error-100 hover:bg-error-200 dark:bg-error-900/20 dark:hover:bg-error-900/30 text-error-700 dark:text-error-400"
 						>
 							Delete
 						</button>
@@ -118,7 +123,7 @@ export default function TableMachines({
 				},
 			},
 		],
-		[connectedMachineName]
+		[connectedMachineName, handleDeleteMachine]
 	);
 
 	const table = useReactTable({

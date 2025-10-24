@@ -2,6 +2,8 @@
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import React, { useState } from "react";
+import { Modal } from "@/components/ui/modal";
+import { ModalInformationOk } from "@/components/ui/modal/ModalInformationOk";
 
 interface ResetPasswordFormProps {
 	token: string;
@@ -12,18 +14,37 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [infoModalOpen, setInfoModalOpen] = useState(false);
+	const [infoModalData, setInfoModalData] = useState<{
+		title: string;
+		message: string;
+		variant: "info" | "success" | "error" | "warning";
+	}>({
+		title: "",
+		message: "",
+		variant: "info",
+	});
+
+	const showInfoModal = (
+		title: string,
+		message: string,
+		variant: "info" | "success" | "error" | "warning" = "info"
+	) => {
+		setInfoModalData({ title, message, variant });
+		setInfoModalOpen(true);
+	};
 
 	const handleSubmit = async () => {
 		console.log("Password reset requested with token:", token);
 
 		// Validation
 		if (!password) {
-			alert("Please enter a new password");
+			showInfoModal("Password Required", "Please enter a new password", "warning");
 			return;
 		}
 
 		if (password.length < 2) {
-			alert("Password must be at least 2 characters long");
+			showInfoModal("Password Too Short", "Password must be at least 2 characters long", "warning");
 			return;
 		}
 
@@ -54,11 +75,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 			} else {
 				const errorMessage =
 					resJson?.error || `There was a server error: ${response.status}`;
-				alert(errorMessage);
+				showInfoModal("Error", errorMessage, "error");
 			}
 		} catch (error) {
 			console.error("Error resetting password:", error);
-			alert("Error connecting to server. Please try again.");
+			showInfoModal("Connection Error", "Error connecting to server. Please try again.", "error");
 		} finally {
 			setIsLoading(false);
 		}
@@ -166,6 +187,16 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 					</div>
 				</form>
 			</div>
+
+			{/* Information Modal */}
+			<Modal isOpen={infoModalOpen} onClose={() => setInfoModalOpen(false)}>
+				<ModalInformationOk
+					title={infoModalData.title}
+					message={infoModalData.message}
+					variant={infoModalData.variant}
+					onClose={() => setInfoModalOpen(false)}
+				/>
+			</Modal>
 		</div>
 	);
 }

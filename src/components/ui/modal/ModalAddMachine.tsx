@@ -41,7 +41,7 @@ export const ModalAddMachine: React.FC<ModalAddMachineProps> = ({
 
 		// Validation
 		if (!urlFor404Api.trim()) {
-			alert("API URL is required");
+			// Just prevent submission - user will see empty required field
 			return;
 		}
 
