@@ -302,21 +302,61 @@ $ the-404> _
 
 ## Backend Integration
 
-While no API utilities currently exist in the codebase, backend calls follow this pattern:
+The project uses **split environment variables** to handle server-side vs client-side API calls:
+
+### Environment Variables
+
+Add to `.env.local` (not in repo):
+
+```bash
+# Internal API (server-side only) - localhost for same-machine routing
+NEXT_PUBLIC_INTERNAL_API_BASE_URL=http://localhost:8002
+
+# External API (client-side) - public domain for browser requests
+NEXT_PUBLIC_EXTERNAL_API_BASE_URL=https://dev.nws-the404.the404api.dashanddata.com
+
+# Development mode
+NEXT_PUBLIC_MODE=workstation  # Prefills login form
+```
+
+### Why Split URLs?
+
+**Problem**: When Next.js and the API run on the same server, **server-side routes cannot reach the public domain** due to NAT hairpinning restrictions. The server cannot connect to its own public IP.
+
+**Solution**: Use different URLs based on execution context:
+
+| Context | Variable | Example | Used By |
+|---------|----------|---------|---------|
+| **Server-side** | `NEXT_PUBLIC_INTERNAL_API_BASE_URL` | `http://localhost:8002` | `/api/auth/login`, `/api/auth/logout` |
+| **Client-side** | `NEXT_PUBLIC_EXTERNAL_API_BASE_URL` | `https://dev.nws-the404...` | Component fetch calls |
+
+### API Call Patterns
+
+**Server-side** (Next.js API routes):
 
 ```typescript
+// src/app/api/auth/login/route.ts
 const response = await fetch(
-	`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/endpoint`,
+	`${process.env.NEXT_PUBLIC_INTERNAL_API_BASE_URL}/users/login`,
+	{
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ email, password }),
+	}
+);
+```
+
+**Client-side** (components):
+
+```typescript
+// src/app/(dashboard)/servers/machines/page.tsx
+const response = await fetch(
+	`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/machines`,
 	{
 		headers: { Authorization: `Bearer ${token}` },
 	}
 );
 ```
-
-Environment variables (not in repo, add to `.env.local`):
-
-- `NEXT_PUBLIC_EXTERNAL_API_BASE_URL`: Base URL for the404back API instances
-- `NEXT_PUBLIC_MODE`: Set to "workstation" for dev mode (prefills login)
 
 ## Template Notes
 
