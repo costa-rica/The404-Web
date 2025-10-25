@@ -45,11 +45,17 @@ export const ModalAddMachine: React.FC<ModalAddMachineProps> = ({
 			return;
 		}
 
+		// Ensure URL has protocol (add https:// if missing)
+		let apiUrl = urlFor404Api.trim();
+		if (!apiUrl.startsWith("http://") && !apiUrl.startsWith("https://")) {
+			apiUrl = `https://${apiUrl}`;
+		}
+
 		// Filter out empty nginx paths
 		const filteredPaths = nginxPaths.filter((path) => path.trim() !== "");
 
 		onSubmit({
-			urlFor404Api: urlFor404Api.trim(),
+			urlFor404Api: apiUrl,
 			userHomeDir: userHomeDir.trim(),
 			nginxStoragePathOptions: filteredPaths,
 		});
