@@ -94,11 +94,11 @@ export default function MachinesPage() {
 		userHomeDir: string;
 		nginxStoragePathOptions: string[];
 	}) => {
-		// TODO: Replace with actual API call
 		console.log("Adding machine:", machineData);
 
+		// POST to the new machine's API endpoint to register it
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL}/machines`,
+			`${machineData.urlFor404Api}/machines`,
 			{
 				method: "POST",
 				headers: {

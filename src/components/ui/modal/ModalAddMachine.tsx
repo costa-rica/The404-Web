@@ -51,6 +51,9 @@ export const ModalAddMachine: React.FC<ModalAddMachineProps> = ({
 			apiUrl = `https://${apiUrl}`;
 		}
 
+		// Remove trailing slash(es)
+		apiUrl = apiUrl.replace(/\/+$/, "");
+
 		// Filter out empty nginx paths
 		const filteredPaths = nginxPaths.filter((path) => path.trim() !== "");
 
